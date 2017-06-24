@@ -1,3 +1,5 @@
+{% load fontawesome %}
+
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -19,6 +21,9 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#">購物車 {% fontawesome_icon 'shopping-cart' %} (0)</a>
+                </li>
                 {% if not user.is_authenticated %}
                     <li><a href="{% url 'login' %}">登入</a></li>
                 {% else %}
