@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^dashboard/users/$', views.UserList.as_view(), name='dashboard_user_list'),
     url(r'^dashboard/users/(?P<pk>\d+)/addtostaff$', views.UserAddToStaff.as_view(), name='dashboard_user_addtostaff'),
     url(r'^dashboard/users/(?P<pk>\d+)/removefromstaff$', views.UserRemoveFromStaff.as_view(), name='dashboard_user_removefromstaff'),
+
+    url(r'^order/(?P<pk>\d+)/', views.OrderDetail.as_view(), name='order_detail')
 ]
 
 if settings.DEBUG:
