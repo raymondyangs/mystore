@@ -34,7 +34,7 @@ class OrderPayWithCreditCard(generic.DetailView):
         context = self.get_context_data(object=self.object)
 
         self.object.payment_method = 'credit_card'
-        self.object.is_paid = True
+        self.object.make_payment()
         self.object.save()
 
         return redirect('order_detail', token=self.object.token)
