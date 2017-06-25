@@ -25,6 +25,21 @@ class OrderDetail(generic.DetailView):
         return Order.objects.get(token=uuid.UUID(self.kwargs.get('token')))
 
 
+class OrderPayWithCreditCard(generic.DetailView):
+    def get_object(self):
+        return Order.objects.get(token=uuid.UUID(self.kwargs.get('token')))
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+
+        self.object.payment_method = 'credit_card'
+        self.object.is_paid = True
+        self.object.save()
+
+        return redirect('order_detail', token=self.object.token)
+
+
 class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
     model = Order
     fields = []

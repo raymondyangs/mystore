@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^dashboard/users/(?P<pk>\d+)/removefromstaff$', views.UserRemoveFromStaff.as_view(), name='dashboard_user_removefromstaff'),
 
     url(r'^order/(?P<token>[0-9a-f-]+)/$', views.OrderDetail.as_view(), name='order_detail'),
+    url(r'^order/(?P<token>[0-9a-f-]+)/pay_with_credit_card$', views.OrderPayWithCreditCard.as_view(), name='order_pay_with_credit_card'),
 ]
 
 if settings.DEBUG:

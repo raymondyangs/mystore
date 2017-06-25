@@ -40,6 +40,8 @@ class Order(models.Model):
     total = models.IntegerField(default=0, verbose_name='總價')
     user = models.ForeignKey(User, verbose_name='訂購使用者')
     token = models.UUIDField(db_index=True, default=uuid.uuid4)
+    is_paid = models.BooleanField(default=False)
+    payment_method = models.CharField(max_length=255)
 
 
 class OrderItem(models.Model):
