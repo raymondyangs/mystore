@@ -7,6 +7,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.ProductList.as_view(), name='product_list'),
     url(r'^(?P<pk>\d+)/$', views.ProductDetail.as_view(), name='product_detail'),
+    url(r'^(?P<pk>\d+)/addtocart$', views.ProductAddToCart.as_view(), name='product_addtocart'),
 
     url(r'^dashboard/products/$', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     url(r'^dashboard/products/create$', views.ProductCreate.as_view(), name='dashboard_product_create'),
