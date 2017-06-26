@@ -1,0 +1,49 @@
+{% extends 'estore/base.html' %}
+{% load bootstrap3 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <h2> 購物車 </h2>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th colspan="2">商品資訊</th>
+                    <th>單價</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in object.items.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'product_detail' product.id %}" class="thumbnail">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                                {% else %}
+                                    <img src="//placehold.it/200x200&text=No Pic" alt="{{ product.title }}">
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'product_detail' product.id %}">
+                                {{ product.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ product.price }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <div class="total clearfix">
+                <span class="pull-right">總計 {{ object.total_price }} NTD</span>
+            </div>
+            <hr>
+            <div class="checkout clearfix">
+                {% bootstrap_button '確認結帳' button_type='button' button_class='btn-lg btn-danger pull-right' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
