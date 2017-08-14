@@ -113,6 +113,8 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
             each_item.product.quantity = each_item.product.quantity - each_item.quantity
             each_item.product.save()
 
+        self.request.cart.cart_items_set.all().delete()
+
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, **kwargs):
