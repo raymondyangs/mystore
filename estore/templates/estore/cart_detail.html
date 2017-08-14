@@ -14,6 +14,7 @@
                 <tr>
                     <th colspan="2">商品資訊</th>
                     <th>單價</th>
+                    <th>操作選項</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -35,6 +36,12 @@
                         </td>
                         <td>
                             {{ product.price }}
+                        </td>
+                        <td>
+                            <form action="{% url 'cart_item_delete' product.id %}" method="POST">
+                                {% csrf_token %}
+                                {% bootstrap_button '<i class="fa fa-trash"></i>' button_type='submit' button_class='btn-link'%}
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}

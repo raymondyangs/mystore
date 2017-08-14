@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^cart/$', views.CartDetailFromRequest.as_view(), name='cart_detail'),
     url(r'^cart/checkout$', views.OrderCreateCartCheckout.as_view(), name='cart_checkout'),
     url(r'^cart/clear$', views.CartDelete.as_view(), name='cart_delete'),
+    url(r'^cart/(?P<pk>\d+)/remove', views.CartItemDelete.as_view(), name='cart_item_delete'),
 
     url(r'^dashboard/products/$', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     url(r'^dashboard/products/create$', views.ProductCreate.as_view(), name='dashboard_product_create'),
