@@ -44,10 +44,12 @@
                                     {% csrf_token %}
                                     <select name="quantity">
                                         {% for i in quantity_iter %}
+                                        {% if cart_item.product.quantity >= i %}
                                         {% if cart_item.quantity == i %}
                                         <option value="{{ i }}" selected>{{ i }}</option>
                                         {% else %}
                                         <option value="{{ i }}">{{ i }}</option>
+                                        {% endif %}
                                         {% endif %}
                                         {% endfor %}
                                     </select>

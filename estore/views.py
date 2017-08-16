@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views import generic
 
 from .forms import OrderInfoForm
-from .models import Cart_Items, Order, Product
+from .models import Cart_Items, Order, OrderItem, Product
 
 
 # Create your views here.
@@ -85,6 +85,17 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
     fields = []
 
     def form_valid(self, form, **kwargs):
+        for each_item in self.request.cart.cart_items_set.all():
+            if each_item.product.quantity < each_item.quantity:
+                if each_item.product.quantity:
+                    messages.error(self.request, '{} 庫存不足, 請重新確認該商品數量'.format(each_item.product.title))
+                    each_item.quantity = each_item.product.quantity
+                    each_item.save()
+                else:
+                    messages.error(self.request, '{} 已售完, 請重新確認訂單'.format(each_item.product.title))
+                    self.request.cart.cart_items_set.remove(each_item)
+                return self.form_invalid(form, **kwargs)
+
         form_orderinfo = kwargs['form_orderinfo'].save()
 
         self.object = form.save(commit=False)
@@ -93,12 +104,14 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
         self.object.info = form_orderinfo
         self.object.save()
 
-        for each_item in self.request.cart.items.all():
+        for each_item in self.request.cart.cart_items_set.all():
             self.object.orderitem_set.create(
-                title=each_item.title,
-                price=each_item.price,
+                title=each_item.product.title,
+                price=each_item.product.price,
                 quantity=1,
             )
+            each_item.product.quantity = each_item.product.quantity - 1
+            each_item.product.save()
 
         return HttpResponseRedirect(self.get_success_url())
 
