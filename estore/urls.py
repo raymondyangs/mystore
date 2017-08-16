@@ -17,6 +17,7 @@ urlpatterns = [
 
     url(r'^dashboard/orders/$', views.DashboardOrderList.as_view(), name='dashboard_order_list'),
     url(r'^dashboard/orders/(?P<token>[0-9a-f-]+)/$', views.DashboardOrderDetail.as_view(), name='dashboard_order_detail'),
+    url(r'^dashboard/orders/(?P<token>[0-9a-f-]+)/(?P<action>[a-z_]+)$', views.DashboardOrderAction.as_view(), name='dashboard_order_action'),
 
     url(r'^dashboard/products/$', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     url(r'^dashboard/products/create$', views.ProductCreate.as_view(), name='dashboard_product_create'),
