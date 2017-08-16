@@ -15,6 +15,9 @@ urlpatterns = [
     url(r'^cart/(?P<pk>\d+)/remove', views.CartItemDelete.as_view(), name='cart_item_delete'),
     url(r'^cart/(?P<pk>\d+)/update', views.CartItemUpdate.as_view(), name='cart_item_update'),
 
+    url(r'^dashboard/orders/$', views.DashboardOrderList.as_view(), name='dashboard_order_list'),
+    url(r'^dashboard/orders/(?P<token>[0-9a-f-]+)/$', views.DashboardOrderDetail.as_view(), name='dashboard_order_detail'),
+
     url(r'^dashboard/products/$', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     url(r'^dashboard/products/create$', views.ProductCreate.as_view(), name='dashboard_product_create'),
     url(r'^dashboard/products/(?P<pk>\d+)/update$', views.ProductUpdate.as_view(), name='dashboard_product_update'),

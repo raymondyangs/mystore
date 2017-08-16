@@ -59,6 +59,31 @@ class CartItemUpdate(generic.UpdateView):
         return reverse('cart_detail')
 
 
+class DashboardOrderDetail(generic.DetailView):
+    permission_required = 'estore.change_order'
+    template_name = 'estore/dashboard_order_detail.html'
+
+    def get_object(self):
+        return Order.objects.get(token=uuid.UUID(self.kwargs.get('token')))
+
+    def get_context_data(self, **kwargs):
+        if 'render_order_paid_state' not in kwargs:
+            if self.object.is_paid:
+                kwargs['paid_state'] = '已付款'
+            else:
+                kwargs['paid_state'] = '未付款'
+
+        return super(DashboardOrderDetail, self).get_context_data(**kwargs)
+
+
+class DashboardOrderList(PermissionRequiredMixin, generic.ListView):
+    permission_required = 'estore.change_order'
+    template_name = 'estore/dashboard_order_list.html'
+
+    def get_queryset(self):
+        return Order.objects.all().order_by('-created')
+
+
 class OrderList(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return self.request.user.order_set.all()
