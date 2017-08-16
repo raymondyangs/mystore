@@ -76,4 +76,4 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order)
     title = models.CharField(max_length=255, verbose_name='產品名稱')
     price = models.IntegerField(verbose_name='價格')
-    quantity = models.IntegerField(verbose_name='數量')
+    quantity = models.PositiveIntegerField(verbose_name='數量', default=1)

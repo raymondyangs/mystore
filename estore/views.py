@@ -108,9 +108,9 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
             self.object.orderitem_set.create(
                 title=each_item.product.title,
                 price=each_item.product.price,
-                quantity=1,
+                quantity=each_item.quantity,
             )
-            each_item.product.quantity = each_item.product.quantity - 1
+            each_item.product.quantity = each_item.product.quantity - each_item.quantity
             each_item.product.save()
 
         return HttpResponseRedirect(self.get_success_url())
