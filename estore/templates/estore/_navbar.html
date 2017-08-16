@@ -34,6 +34,7 @@
                             {% if perms.estore.change_product %}
                                 <li><a href="{% url 'dashboard_product_list' %}">主控台</a></li>
                             {% endif %}
+                            <li><a href="{% url 'order_list' %}">個人訂單列表</a></li>
                             <li><a href="{% url 'logout' %}">登出</a></li>
                         </ul>
                     </li>
