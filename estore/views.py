@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from .forms import OrderInfoForm
+from .forms import OrderInfoForm, EstoreUserCreationForm
 from .models import Cart_Items, Order, OrderItem, Product
 
 
@@ -277,3 +277,12 @@ class UserRemoveFromStaff(PermissionRequiredMixin, generic.UpdateView):
             group.user_set.remove(self.object)
             messages.success(self.request, '已變更使用者身份為一般使用者')
         return reverse('dashboard_user_list')
+
+
+class UserCreate(generic.CreateView):
+    model = User
+    form_class = EstoreUserCreationForm
+
+    def get_success_url(self):
+        messages.success(self.request, '帳戶已創立')
+        return reverse('login')
