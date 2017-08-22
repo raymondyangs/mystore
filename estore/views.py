@@ -121,26 +121,17 @@ class OrderList(LoginRequiredMixin, generic.ListView):
 
 
 class OrderDetailMixin(object):
+    def get_context_data(self, **kwargs):
+        if 'credit_form' not in kwargs:
+            kwargs['credit_form'] = self.object.generate_credit_form(request=self.request)
+        return super(OrderDetailMixin, self).get_context_data(**kwargs)
+
     def get_object(self):
         return self.request.user.order_set.get(token=uuid.UUID(self.kwargs.get('token')))
 
 
 class OrderDetail(OrderDetailMixin, generic.DetailView):
     pass
-
-
-class OrderPayWithCreditCard(OrderDetailMixin, generic.DetailView):
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-
-        self.object.payment_method = 'credit_card'
-        self.object.make_payment()
-        self.object.save()
-
-        messages.success(self.request, '成功完成付款')
-
-        return redirect('order_list')
 
 
 class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
