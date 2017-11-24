@@ -1,0 +1,18 @@
+{% extends 'estore/base.html' %}
+{% load bootstrap3 %}
+
+{% block content %}
+    {% if next and not messages %}
+        {% if user.is_authenticated %}
+            {% bootstrap_alert '你的帳號沒有權限瀏覽此頁面，請嘗試登入其他帳號' alert_type='danger' %}
+        {% else %}
+            {% bootstrap_alert '登入以瀏覽此頁' alert_type='info' %}
+        {% endif %}
+    {% endif %}
+    <form method="post" action="{% url 'login' %}?next={{ next }}">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='登入' %} {% endbuttons %}
+    </form>
+    <p><a href="{% url 'password_reset' %}">忘記密碼?</a></p>
+{% endblock %}
