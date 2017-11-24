@@ -59,10 +59,14 @@
                 </tbody>
             </table>
             {% if not object.is_paid %}
-                <div class="pull-right">
-                    {% url 'order_pay_with_credit_card' token=object.token as order_pay_with_credit_card_url %}
-                    {% bootstrap_button '以信用卡付款' button_type='button' button_class='btn-lg btn-danger pull-right' href=order_pay_with_credit_card_url %}
-                    {% bootstrap_button '以 ATM 付款' button_type='button' button_class='btn-lg btn-danger pull-right' href='#' %}
+                <div class="pull-right form-inline">
+                    <form action="{{ credit_form.action }}" method="POST" class="form-group">
+                        {% bootstrap_form credit_form %}
+                        {% bootstrap_button '以信用卡付款' button_type='submit' button_class='btn-lg btn-danger pull-right' %}
+                    </form>
+                    <form action="" method="POST" class="form-group">
+                        {% bootstrap_button '以 ATM 付款' button_type='button' button_class='btn-lg btn-danger pull-right' href='#' %}
+                    </form>
                 </div>
             {% else %}
                 <p class="text-center">此訂單已完成付款</p>
