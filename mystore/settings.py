@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['localhost', 'lit-beach-81401.herokuapp.com']
 INSTALLED_APPS = [
     'estore',
     'bootstrap3',
+    'fontawesome',
     'storages',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'estore.middleware.cart.CartMiddleware',
 ]
 
 ROOT_URLCONF = 'mystore.urls'
