@@ -1,0 +1,30 @@
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=1 %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Estore 後台</title>
+</head>
+<body>
+{% block navbar %}
+    {% include "estore/_navbar.html" %}
+{% endblock %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills flex-column" style="max-width: 300px;">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard_product_list' %}">產品管理</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% bootstrap_messages %}
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
