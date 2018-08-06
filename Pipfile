@@ -8,6 +8,7 @@ django = "*"
 "django-bootstrap4" = "*"
 pillow = "*"
 django-fontawesome = "*"
+django-fsm = "*"
 
 [dev-packages]
 
