@@ -11,6 +11,11 @@ from .models import Product
 # Create your views here.
 
 
+class CartDetailFromRequest(generic.DetailView):
+    def get_object(self):
+        return self.request.cart
+
+
 class ProductList(PermissionRequiredMixin, generic.ListView):
     model = Product
 
