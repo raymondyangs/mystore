@@ -20,7 +20,7 @@ urlpatterns = [
     path('dashboard/users/<int:pk>/addtostaff', views.UserAddToStaff.as_view(), name='dashboard_user_addtostaff'),
     path('dashboard/users/<int:pk>/removefromstaff', views.UserRemoveFromStaff.as_view(), name='dashboard_user_removefromstaff'),
 
-    path('order/<int:pk>/', views.OrderDetail.as_view(), name='order_detail'),
+    path('order/<uuid:token>/', views.OrderDetail.as_view(), name='order_detail'),
 ]
 
 if settings.DEBUG:
