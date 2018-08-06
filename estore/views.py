@@ -18,15 +18,16 @@ class CartDetailFromRequest(generic.DetailView):
         return self.request.cart
 
 
-class OrderDetail(generic.DetailView):
+class OrderDetailMixin(object):
     def get_object(self):
-        return get_object_or_404(Order.objects, token=self.kwargs.get('token'))
+        return get_object_or_404(self.request.user.order_set, token=self.kwargs.get('token'))
 
 
-class OrderPayWithCreditCard(generic.DetailView):
-    def get_object(self):
-        return get_object_or_404(Order.objects, token=self.kwargs.get('token'))
+class OrderDetail(OrderDetailMixin, generic.DetailView):
+    pass
 
+
+class OrderPayWithCreditCard(OrderDetailMixin, generic.DetailView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
