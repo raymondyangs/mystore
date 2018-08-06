@@ -21,6 +21,7 @@ urlpatterns = [
     path('dashboard/users/<int:pk>/removefromstaff', views.UserRemoveFromStaff.as_view(), name='dashboard_user_removefromstaff'),
 
     path('order/<uuid:token>/', views.OrderDetail.as_view(), name='order_detail'),
+    path('order/<uuid:token>/pay_with_credit_card', views.OrderPayWithCreditCard.as_view(), name='order_pay_with_credit_card'),
 ]
 
 if settings.DEBUG:
