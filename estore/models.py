@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
@@ -22,3 +23,23 @@ class Cart(models.Model):
         for product in self.items.all():
             sum += product.price
         return sum
+
+
+class OrderInfo(models.Model):
+    billing_name = models.CharField(max_length=255, verbose_name='購買人姓名')
+    billing_address = models.CharField(max_length=255, verbose_name='購買人地址')
+    shipping_name = models.CharField(max_length=255, verbose_name='收件人姓名')
+    shipping_address = models.CharField(max_length=255, verbose_name='收件人地址')
+
+
+class Order(models.Model):
+    info = models.OneToOneField(OrderInfo, on_delete=models.CASCADE, primary_key=True, verbose_name='訂購資訊')
+    total = models.IntegerField(default=0, verbose_name='總價')
+    user = models.ForeignKey(User, verbose_name='訂購使用者', null=True, on_delete=models.SET_NULL)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, verbose_name='產品名稱')
+    price = models.IntegerField(verbose_name='價格')
+    quantity = models.IntegerField(verbose_name='數量')

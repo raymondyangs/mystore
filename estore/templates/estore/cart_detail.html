@@ -44,7 +44,8 @@
             </div>
             <hr>
             <div class="checkout clearfix">
-                {% bootstrap_button '確認結帳' button_class='btn-lg btn-danger pull-right' href='#' %}
+                {% url 'cart_checkout' as cart_checkout_url %}
+                {% bootstrap_button '確認結帳' button_class='btn-lg btn-danger pull-right' href=cart_checkout_url %}
             </div>
         </div>
     </div>

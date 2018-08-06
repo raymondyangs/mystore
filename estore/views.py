@@ -1,11 +1,13 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group, User
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from .models import Product
+from .forms import OrderInfoForm
+from .models import Order, Product
 
 
 # Create your views here.
@@ -14,6 +16,50 @@ from .models import Product
 class CartDetailFromRequest(generic.DetailView):
     def get_object(self):
         return self.request.cart
+
+
+class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
+    model = Order
+    fields = []
+
+    def form_valid(self, form, **kwargs):
+        form_orderinfo = kwargs['form_orderinfo'].save()
+
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.total = self.request.cart.total_price()
+        self.object.info = form_orderinfo
+        self.object.save()
+
+        for each_item in self.request.cart.items.all():
+            self.object.orderitem_set.create(
+                title=each_item.title,
+                price=each_item.price,
+                quantity=1,
+            )
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, **kwargs):
+        return self.render_to_response(self.get_context_data(form=form, **kwargs))
+
+    def get_context_data(self, **kwargs):
+        if 'form_orderinfo' not in kwargs:
+            kwargs['form_orderinfo'] = OrderInfoForm()
+        return super(OrderCreateCartCheckout, self).get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        form_orderinfo = OrderInfoForm(request.POST)
+        if form.is_valid() and form_orderinfo.is_valid():
+            return self.form_valid(form, form_orderinfo=form_orderinfo)
+        else:
+            return self.form_invalid(form, form_orderinfo=form_orderinfo)
+
+    def get_success_url(self):
+        messages.success(self.request, '訂單已生成')
+        return reverse('product_list')
 
 
 class ProductList(PermissionRequiredMixin, generic.ListView):
