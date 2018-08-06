@@ -19,6 +19,8 @@ urlpatterns = [
     path('dashboard/users/', views.UserList.as_view(), name='dashboard_user_list'),
     path('dashboard/users/<int:pk>/addtostaff', views.UserAddToStaff.as_view(), name='dashboard_user_addtostaff'),
     path('dashboard/users/<int:pk>/removefromstaff', views.UserRemoveFromStaff.as_view(), name='dashboard_user_removefromstaff'),
+
+    path('order/<int:pk>/', views.OrderDetail.as_view(), name='order_detail'),
 ]
 
 if settings.DEBUG:
