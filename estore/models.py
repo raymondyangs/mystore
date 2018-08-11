@@ -1,11 +1,13 @@
 import uuid
 
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from django_fsm import FSMField, transition
+from spgateway.models import SpgatewayOrderMixin
 
 # Create your models here.
 
@@ -44,7 +46,7 @@ class OrderInfo(models.Model):
     shipping_address = models.CharField(max_length=255, verbose_name='收件人地址')
 
 
-class Order(models.Model):
+class Order(SpgatewayOrderMixin, models.Model):
     info = models.OneToOneField(OrderInfo, on_delete=models.CASCADE, primary_key=True, verbose_name='訂購資訊')
     total = models.IntegerField(default=0, verbose_name='總價')
     user = models.ForeignKey(User, verbose_name='訂購使用者', null=True, on_delete=models.SET_NULL)
@@ -55,6 +57,33 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     state_list = (_('order_placed'), _('paid'), _('shipping'), _('shipped'), _('good_returned'), _('order_canceled'),)
+
+    SpgatewayAmtFieldName = 'total'
+    SpgatewayItemDesc = '貨物一批'
+
+    def get_SpgatewayEmail(self, **kwargs):
+        return self.user.email
+
+    def spgateway_notify(self, request, trade_info):
+        status = trade_info['Status']
+        status_msg = trade_info['Message']
+
+        if status == 'SUCCESS':
+            self.make_payment()
+            self.payment_method = trade_info['Result']['PaymentType']
+            self.save()
+            messages.success(request, status_msg)
+        else:
+            messages.error(request, '{}: {}'.format(status, status_msg))
+
+    def spgateway_return(self, request, trade_info):
+        status = trade_info['Status']
+        status_msg = trade_info['Message']
+
+        if status == 'SUCCESS':
+            messages.success(request, status_msg)
+        else:
+            messages.error(request, '{}: {}'.format(status, status_msg))
 
     def get_absolute_url(self):
         return reverse('order_detail', kwargs={'token': self.token})

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8e973a5aa0c30dec7fbbeb6a2d74e975ab5b27d3eeb1f5bce266adcf26eaafaf"
+            "sha256": "715f00f2535c1e37fe67f5959fdba32d9ea1241ed684279a4a2c567c3fe89999"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,6 +46,14 @@
             "index": "pypi",
             "version": "==2.6.0"
         },
+        "django-spgateway": {
+            "hashes": [
+                "sha256:33f783cdaba123e70df6cdc410c10b56950b6788fbc170645b1a0a48e5347488",
+                "sha256:9c4986409c5049870bd219de26d55163638c02a2be9a9bf54a479331c8c2c3c9"
+            ],
+            "index": "pypi",
+            "version": "==0.3.2"
+        },
         "pillow": {
             "hashes": [
                 "sha256:00def5b638994f888d1058e4d17c86dec8e1113c3741a0a8a659039aec59a83a",
@@ -81,6 +89,12 @@
             ],
             "index": "pypi",
             "version": "==5.2.0"
+        },
+        "pycrypto": {
+            "hashes": [
+                "sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
+            ],
+            "version": "==2.6.1"
         },
         "pytz": {
             "hashes": [

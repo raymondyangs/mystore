@@ -29,7 +29,6 @@ urlpatterns = [
 
     path('order/', views.OrderList.as_view(), name='order_list'),
     path('order/<uuid:token>/', views.OrderDetail.as_view(), name='order_detail'),
-    path('order/<uuid:token>/pay_with_credit_card', views.OrderPayWithCreditCard.as_view(), name='order_pay_with_credit_card'),
 
     path('sign-up', views.UserCreate.as_view(), name='sign_up'),
 ]
