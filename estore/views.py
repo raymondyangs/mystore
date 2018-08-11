@@ -8,7 +8,7 @@ from django.views import generic
 
 from django_fsm import TransitionNotAllowed
 
-from .forms import OrderInfoForm
+from .forms import OrderInfoForm, EstoreUserCreationForm
 from .models import Cart_Items, Order, OrderItem, Product
 
 
@@ -266,6 +266,15 @@ class UserAddToStaff(PermissionRequiredMixin, generic.UpdateView):
             group.user_set.add(self.object)
             messages.success(self.request, '已變更使用者身份為管理者')
         return reverse('dashboard_user_list')
+
+
+class UserCreate(generic.CreateView):
+    model = User
+    form_class = EstoreUserCreationForm
+
+    def get_success_url(self):
+        messages.success(self.request, '帳戶已創立')
+        return reverse('login')
 
 
 class UserRemoveFromStaff(PermissionRequiredMixin, generic.UpdateView):
