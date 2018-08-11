@@ -11,6 +11,8 @@ django-fontawesome = "*"
 django-fsm = "*"
 
 [dev-packages]
+six = "*"
+django-naomi = "*"
 
 [requires]
 python_version = "3.7"

@@ -9,6 +9,7 @@ from django.views import generic
 from django_fsm import TransitionNotAllowed
 
 from .forms import OrderInfoForm, EstoreUserCreationForm
+from .helpers import send_order_mail
 from .models import Cart_Items, Order, OrderItem, Product
 
 
@@ -178,6 +179,13 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
             each_item.product.save()
 
         self.request.cart.cart_items_set.all().delete()
+
+        send_order_mail(
+            from_email=None,
+            recipient_list=(self.request.user.email,),
+            request=self.request,
+            order=self.object,
+        )
 
         return HttpResponseRedirect(self.get_success_url())
 
