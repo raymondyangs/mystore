@@ -7,24 +7,18 @@ from django.urls import reverse
 from django.views import generic
 
 from .forms import OrderInfoForm
-from .models import Order, Product
+from .models import Cart_Items, Order, Product
 
 
 # Create your views here.
 
 
 class CartItemDelete(generic.DeleteView):
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-        self.request.cart.items.remove(self.object)
-        return HttpResponseRedirect(success_url)
-
     def get_object(self, queryset=None):
-        return self.request.cart.items.get(id=self.kwargs.get('pk'))
+        return self.request.cart.cart_items_set.get(id=self.kwargs.get('pk'))
 
     def get_success_url(self):
-        messages.warning(self.request, '成功將 {} 從購物車刪除!'.format(self.object.title))
+        messages.warning(self.request, '成功將 {} 從購物車刪除!'.format(self.object.product.title))
         return reverse('cart_detail')
 
 
@@ -33,8 +27,26 @@ class CartDetailMixin(object):
         return self.request.cart
 
 
+class CartItemUpdate(generic.UpdateView):
+    model = Cart_Items
+    fields = ['quantity']
+    http_method_names = ['post']
+
+    def get_object(self):
+        return self.request.cart.cart_items_set.get(id=self.kwargs.get('pk'))
+
+    def get_success_url(self):
+        messages.success(self.request, '成功變更數量')
+        return reverse('cart_detail')
+
+
 class CartDetailFromRequest(CartDetailMixin, generic.DetailView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = {
+            'quantity_iter': range(1, 6)
+        }
+        context.update(kwargs)
+        return super(CartDetailFromRequest, self).get_context_data(**context)
 
 
 class CartDelete(CartDetailMixin, generic.DeleteView):
@@ -80,10 +92,10 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
         self.object.info = form_orderinfo
         self.object.save()
 
-        for each_item in self.request.cart.items.all():
+        for each_item in self.request.cart.cart_items_set.all():
             self.object.orderitem_set.create(
-                title=each_item.title,
-                price=each_item.price,
+                title=each_item.product.title,
+                price=each_item.product.price,
                 quantity=1,
             )
 
@@ -151,7 +163,7 @@ class ProductAddToCart(generic.DetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.request.cart.items.add(self.object)
+        self.request.cart.cart_items_set.create(product=self.object, quantity=1)
 
         messages.success(self.request, '已加入購物車')
         return redirect('product_detail', pk=self.object.id)

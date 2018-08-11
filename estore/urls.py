@@ -13,6 +13,7 @@ urlpatterns = [
     path('cart/checkout', views.OrderCreateCartCheckout.as_view(), name='cart_checkout'),
     path('cart/clear', views.CartDelete.as_view(), name='cart_delete'),
     path('cart/<int:pk>/remove', views.CartItemDelete.as_view(), name='cart_item_delete'),
+    path('cart/<int:pk>/update', views.CartItemUpdate.as_view(), name='cart_item_update'),
 
     path('dashboard/products/', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     path('dashboard/products/create', views.ProductCreate.as_view(), name='dashboard_product_create'),
