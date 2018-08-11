@@ -50,6 +50,7 @@ class Order(models.Model):
     is_paid = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=255, default='')
     state = FSMField(default='order_placed')
+    created = models.DateTimeField(auto_now_add=True)
 
     @transition(field=state, source='order_placed', target='paid')
     def make_payment(self):
