@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from django_fsm import FSMField, transition
 
@@ -51,6 +52,8 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=255, default='')
     state = FSMField(default='order_placed')
     created = models.DateTimeField(auto_now_add=True)
+
+    state_list = (_('order_placed'), _('paid'), _('shipping'), _('shipped'), _('good_returned'), _('order_canceled'),)
 
     @transition(field=state, source='order_placed', target='paid')
     def make_payment(self):
