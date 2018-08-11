@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from django_fsm import FSMField, transition
 
@@ -20,13 +21,19 @@ class Product(models.Model):
 
 
 class Cart(models.Model):
-    items = models.ManyToManyField(Product)
+    items = models.ManyToManyField(Product, through='Cart_Items')
 
     def total_price(self):
         sum = 0
-        for product in self.items.all():
-            sum += product.price
+        for cart_item in self.cart_items_set.all():
+            sum += cart_item.product.price * cart_item.quantity
         return sum
+
+
+class Cart_Items(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(verbose_name='數量', default=1)
 
 
 class OrderInfo(models.Model):
@@ -44,6 +51,9 @@ class Order(models.Model):
     is_paid = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=255, default='')
     state = FSMField(default='order_placed')
+    created = models.DateTimeField(auto_now_add=True)
+
+    state_list = (_('order_placed'), _('paid'), _('shipping'), _('shipped'), _('good_returned'), _('order_canceled'),)
 
     @transition(field=state, source='order_placed', target='paid')
     def make_payment(self):
