@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
 
+from django_fsm import TransitionNotAllowed
+
 from .forms import OrderInfoForm
 from .models import Cart_Items, Order, OrderItem, Product
 
@@ -56,6 +58,36 @@ class CartDelete(CartDetailMixin, generic.DeleteView):
 
     def get(self, request, *args, **kwargs):
         return redirect('cart_detail')
+
+
+class DashboardOrderAction(generic.UpdateView):
+    fields = []
+    accept_acctions = ['make_payment', 'ship', 'deliver', 'return_good', 'cancel_order']
+
+    def get_object(self):
+        return Order.objects.get(token=self.kwargs.get('token'))
+
+    def form_valid(self, form):
+        action = self.kwargs.get('action')
+        if action in self.accept_acctions:
+            action_func = getattr(self.object, action)
+            try:
+                action_func()
+                form.save()
+            except TransitionNotAllowed:
+                return self.form_invalid(form)
+
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, '無法處理訂單操作')
+        return HttpResponseRedirect(reverse('dashboard_order_detail', kwargs={'token': self.object.token}))
+
+    def get_success_url(self):
+        messages.success(self.request, '訂單狀態已改變')
+        return reverse('dashboard_order_detail', kwargs={'token': self.object.token})
 
 
 class DashboardOrderDetail(generic.DetailView):

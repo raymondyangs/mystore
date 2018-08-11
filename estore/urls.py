@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('dashboard/orders/', views.DashboardOrderList.as_view(), name='dashboard_order_list'),
     path('dashboard/orders/<uuid:token>/', views.DashboardOrderDetail.as_view(), name='dashboard_order_detail'),
+    path('dashboard/orders/<uuid:token>/<str:action>', views.DashboardOrderAction.as_view(), name='dashboard_order_action'),
 
     path('dashboard/products/', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     path('dashboard/products/create', views.ProductCreate.as_view(), name='dashboard_product_create'),
