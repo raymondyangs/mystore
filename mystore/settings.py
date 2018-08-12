@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import django_heroku
 import os
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,7 +35,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'estore',
+    'spgateway',
     'bootstrap4',
+    'fontawesome',
     'storages',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'estore.middleware.cart.CartMiddleware',
 ]
 
 ROOT_URLCONF = 'mystore.urls'
@@ -107,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hant'
 
 TIME_ZONE = 'UTC'
 
@@ -138,3 +143,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
+
+SPGATEWAY_PROFILE = {
+    'MERCHANT_ID_HRERE': {
+        'MerchantID': 'MERCHANT_ID_HRERE',
+        'HashKey': 'HASHKEY_HERE',
+        'HashIV': 'HASHIV_HERE',
+        'ReturnURL': reverse_lazy('spgateway_NotifyView'),
+        'NotifyURL': '',
+    }
+}
+SPGATEWAY_MERCHANTID = 'MERCHANT_ID_HRERE'
+SPGATEWAY_ORDERMODEL = 'estore.Order'

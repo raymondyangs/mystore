@@ -1,4 +1,13 @@
+import uuid
+
+from django.contrib import messages
+from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
+
+from django_fsm import FSMField, transition
+from spgateway.models import SpgatewayOrderMixin
 
 # Create your models here.
 
@@ -12,3 +21,96 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Cart(models.Model):
+    items = models.ManyToManyField(Product, through='Cart_Items')
+
+    def total_price(self):
+        sum = 0
+        for cart_item in self.cart_items_set.all():
+            sum += cart_item.product.price * cart_item.quantity
+        return sum
+
+
+class Cart_Items(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(verbose_name='數量', default=1)
+
+
+class OrderInfo(models.Model):
+    billing_name = models.CharField(max_length=255, verbose_name='購買人姓名')
+    billing_address = models.CharField(max_length=255, verbose_name='購買人地址')
+    shipping_name = models.CharField(max_length=255, verbose_name='收件人姓名')
+    shipping_address = models.CharField(max_length=255, verbose_name='收件人地址')
+
+
+class Order(SpgatewayOrderMixin, models.Model):
+    info = models.OneToOneField(OrderInfo, on_delete=models.CASCADE, primary_key=True, verbose_name='訂購資訊')
+    total = models.IntegerField(default=0, verbose_name='總價')
+    user = models.ForeignKey(User, verbose_name='訂購使用者', null=True, on_delete=models.SET_NULL)
+    token = models.UUIDField(db_index=True, default=uuid.uuid4)
+    is_paid = models.BooleanField(default=False)
+    payment_method = models.CharField(max_length=255, default='')
+    state = FSMField(default='order_placed')
+    created = models.DateTimeField(auto_now_add=True)
+
+    state_list = (_('order_placed'), _('paid'), _('shipping'), _('shipped'), _('good_returned'), _('order_canceled'),)
+
+    SpgatewayAmtFieldName = 'total'
+    SpgatewayItemDesc = '貨物一批'
+
+    def get_SpgatewayEmail(self, **kwargs):
+        return self.user.email
+
+    def spgateway_notify(self, request, trade_info):
+        status = trade_info['Status']
+        status_msg = trade_info['Message']
+
+        if status == 'SUCCESS':
+            self.make_payment()
+            self.payment_method = trade_info['Result']['PaymentType']
+            self.save()
+            messages.success(request, status_msg)
+        else:
+            messages.error(request, '{}: {}'.format(status, status_msg))
+
+    def spgateway_return(self, request, trade_info):
+        status = trade_info['Status']
+        status_msg = trade_info['Message']
+
+        if status == 'SUCCESS':
+            messages.success(request, status_msg)
+        else:
+            messages.error(request, '{}: {}'.format(status, status_msg))
+
+    def get_absolute_url(self):
+        return reverse('order_detail', kwargs={'token': self.token})
+
+    @transition(field=state, source='order_placed', target='paid')
+    def make_payment(self):
+        self.is_paid = True
+
+    @transition(field=state, source='paid', target='shipping')
+    def ship(self):
+        pass
+
+    @transition(field=state, source='shipping', target='shipped')
+    def deliver(self):
+        pass
+
+    @transition(field=state, source='shipped', target='good_returned')
+    def return_good(self):
+        pass
+
+    @transition(field=state, source=['order_placed', 'paid'], target='order_canceled')
+    def cancel_order(self):
+        pass
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, verbose_name='產品名稱')
+    price = models.IntegerField(verbose_name='價格')
+    quantity = models.IntegerField(verbose_name='數量')

@@ -11,8 +11,13 @@ gunicorn = "*"
 django-heroku = "*"
 django-storages = "*"
 "boto3" = "*"
+django-fontawesome = "*"
+django-fsm = "*"
+django-spgateway = "*"
 
 [dev-packages]
+six = "*"
+django-naomi = "*"
 
 [requires]
 python_version = "3.7"
