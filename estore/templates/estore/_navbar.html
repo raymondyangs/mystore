@@ -17,6 +17,9 @@
       </li>
       {% if not user.is_authenticated %}
       <li class="nav-item">
+        <a class="nav-link" href="{% url 'sign_up' %}">註冊</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'login' %}">登入</a>
       </li>
       {% else %}

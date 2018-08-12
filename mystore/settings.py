@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -32,6 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'estore',
+    'spgateway',
     'bootstrap4',
     'fontawesome',
     'django.contrib.admin',
@@ -126,7 +129,23 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+SPGATEWAY_PROFILE = {
+    'MERCHANT_ID_HRERE': {
+        'MerchantID': 'MERCHANT_ID_HRERE',
+        'HashKey': 'HASHKEY_HERE',
+        'HashIV': 'HASHIV_HERE',
+        'ReturnURL': reverse_lazy('spgateway_NotifyView'),
+        'NotifyURL': '',
+    }
+}
+SPGATEWAY_MERCHANTID = 'MERCHANT_ID_HRERE'
+SPGATEWAY_ORDERMODEL = 'estore.Order'
+
+
+if DEBUG:
+    INSTALLED_APPS += ('naomi',)
+    EMAIL_BACKEND = 'naomi.mail.backends.naomi.NaomiBackend'
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'mail')

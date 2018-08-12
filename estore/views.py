@@ -8,7 +8,8 @@ from django.views import generic
 
 from django_fsm import TransitionNotAllowed
 
-from .forms import OrderInfoForm
+from .forms import OrderInfoForm, EstoreUserCreationForm
+from .helpers import send_order_mail
 from .models import Cart_Items, Order, OrderItem, Product
 
 
@@ -120,27 +121,18 @@ class OrderList(LoginRequiredMixin, generic.ListView):
         return self.request.user.order_set.all()
 
 
-class OrderDetailMixin(object):
+class OrderDetailMixin(object):    
+    def get_context_data(self, **kwargs):
+        if 'credit_form' not in kwargs:
+            kwargs['credit_form'] = self.object.generate_credit_form(request=self.request)
+        return super(OrderDetailMixin, self).get_context_data(**kwargs)
+
     def get_object(self):
         return get_object_or_404(self.request.user.order_set, token=self.kwargs.get('token'))
 
 
 class OrderDetail(OrderDetailMixin, generic.DetailView):
     pass
-
-
-class OrderPayWithCreditCard(OrderDetailMixin, generic.DetailView):
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-
-        self.object.payment_method = 'credit_card'
-        self.object.make_payment()
-        self.object.save()
-
-        messages.success(self.request, '成功完成付款')
-
-        return redirect('order_list')
 
 
 class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
@@ -178,6 +170,13 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
             each_item.product.save()
 
         self.request.cart.cart_items_set.all().delete()
+
+        send_order_mail(
+            from_email=None,
+            recipient_list=(self.request.user.email,),
+            request=self.request,
+            order=self.object,
+        )
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -266,6 +265,15 @@ class UserAddToStaff(PermissionRequiredMixin, generic.UpdateView):
             group.user_set.add(self.object)
             messages.success(self.request, '已變更使用者身份為管理者')
         return reverse('dashboard_user_list')
+
+
+class UserCreate(generic.CreateView):
+    model = User
+    form_class = EstoreUserCreationForm
+
+    def get_success_url(self):
+        messages.success(self.request, '帳戶已創立')
+        return reverse('login')
 
 
 class UserRemoveFromStaff(PermissionRequiredMixin, generic.UpdateView):
