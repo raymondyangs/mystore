@@ -1,5 +1,10 @@
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">儲存</button>
-</form>
+{% extends 'estore/base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% bootstrap_button '儲存' button_type='submit' button_class='btn-primary' %}
+    </form>
+{% endblock %}
