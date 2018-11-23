@@ -2,7 +2,6 @@
 {% load bootstrap4 %}
 
 {% block content %}
-    <p>已登出!</p>
     {% url 'login' as login_url %}
     {% bootstrap_button '重新登入' button_type='link' button_class='btn-primary' href=login_url %}
 {% endblock %}
