@@ -10,6 +10,10 @@ from .models import Product
 class ProductList(generic.ListView):
     model = Product
 
+class ProductDetail(generic.DetailView):
+    model = Product
+
+
 class ProductCreate(PermissionRequiredMixin, generic.CreateView):
     permission_required = 'estore.add_product'
     model = Product
