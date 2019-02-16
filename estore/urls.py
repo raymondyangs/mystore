@@ -12,6 +12,7 @@ urlpatterns = [
     path('dashboard/products/', views.ProductList.as_view(template_name='estore/dashboard_product_list.html', permission_required='estore.change_product'), name='dashboard_product_list'),
     path('dashboard/products/create', views.ProductCreate.as_view(), name='dashboard_product_create'),
     path('dashboard/products/<int:pk>/update', views.ProductUpdate.as_view(), name='dashboard_product_update'),
+    path('order/<int:pk>/', views.OrderDetail.as_view(), name='order_detail'),
 	path('<int:pk>/addtocart', views.ProductAddToCart.as_view(), name='product_addtocart'),
 ]
 

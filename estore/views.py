@@ -57,6 +57,8 @@ class CartDetailFromRequest(generic.DetailView):
     def get_object(self):
         return self.request.cart
 
+class OrderDetail(generic.DetailView):
+    model = Order
 
 class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
     model = Order
@@ -99,4 +101,4 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
 
     def get_success_url(self):
         messages.success(self.request, '訂單已生成')
-        return reverse('product_list')
+        return reverse('order_detail', kwargs={'pk': self.object.pk})
