@@ -50,3 +50,7 @@ class ProductAddToCart(generic.DetailView):
 
         messages.success(self.request, '已加入購物車')
         return redirect('product_detail', pk=self.object.id)
+
+class CartDetailFromRequest(generic.DetailView):
+    def get_object(self):
+        return self.request.cart
