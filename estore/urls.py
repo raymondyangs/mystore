@@ -13,6 +13,7 @@ urlpatterns = [
     path('dashboard/products/create', views.ProductCreate.as_view(), name='dashboard_product_create'),
     path('dashboard/products/<int:pk>/update', views.ProductUpdate.as_view(), name='dashboard_product_update'),
     path('order/<uuid:token>/', views.OrderDetail.as_view(), name='order_detail'),
+    path('order/<uuid:token>/pay_with_credit_card', views.OrderPayWithCreditCard.as_view(), name='order_pay_with_credit_card'),
 	path('<int:pk>/addtocart', views.ProductAddToCart.as_view(), name='product_addtocart'),
 ]
 

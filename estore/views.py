@@ -104,3 +104,17 @@ class OrderCreateCartCheckout(LoginRequiredMixin, generic.CreateView):
     def get_success_url(self):
         messages.success(self.request, '訂單已生成')
         return reverse('order_detail', kwargs={'token': self.object.token})
+
+class OrderPayWithCreditCard(generic.DetailView):
+    def get_object(self):
+        return get_object_or_404(Order.objects, token=self.kwargs.get('token'))
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+
+        self.object.payment_method = 'credit_card'
+        self.object.is_paid = True
+        self.object.save()
+
+        return redirect('order_detail', token=self.object.token)
