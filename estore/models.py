@@ -11,3 +11,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+class Cart(models.Model):
+    items = models.ManyToManyField(Product)
