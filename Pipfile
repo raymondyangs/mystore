@@ -10,6 +10,7 @@ django = "*"
 "django-bootstrap4" = "*"
 pillow = "*"
 django-fontawesome = "*"
+django-fsm = "*"
 
 [requires]
 python_version = "3.7"

@@ -57,7 +57,7 @@
             {% if not object.is_paid %}
                 <div class="pull-right">
                     {% url 'order_pay_with_credit_card' token=object.token as order_pay_with_credit_card_url %}
-                    {% bootstrap_button '以信用卡付款' button_type='link' button_class='btn-lg btn-danger pull-right' href=order_pay_with_credit_card_url %}
+                   {% bootstrap_button '以信用卡付款' button_type='link' button_class='btn-lg btn-danger pull-right' href=order_pay_with_credit_card_url %}
                     {% bootstrap_button '以 ATM 付款' button_type='link' button_class='btn-lg btn-danger pull-right' href='#' %}
                 </div>
             {% else %}
